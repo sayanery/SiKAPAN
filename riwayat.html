@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SiKAPAN – Riwayat Panen</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #2d4a2d;
+    --bg: #f0f2ef;
+    --card-bg: #ffffff;
+    --text-primary: #1a2e1a;
+    --text-muted: #6b8a6b;
+    --text-light: #a8bfa8;
+    --tag-green: #e6f0e6;
+    --tag-green-text: #2d6a2d;
+    --tag-orange: #fff1e6;
+    --tag-orange-text: #b85a00;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .phone-shell {
+    width: 390px;
+    min-height: 844px;
+    background: var(--bg);
+    padding-bottom: 90px;
+    position: relative;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    padding: 28px 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 0.2px;
+  }
+  .header-filter {
+    width: 36px; height: 36px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    cursor: pointer;
+  }
+  .header-filter svg { width: 18px; height: 18px; }
+
+  /* ─── SEARCH BAR ─── */
+  .search-wrap {
+    padding: 0 16px 14px;
+  }
+  .search-box {
+    background: #e0e6de;
+    border-radius: 12px;
+    padding: 13px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 60px;
+    animation: fadeIn 0.4s ease both;
+  }
+  .search-box svg { width: 18px; height: 18px; color: var(--text-muted); flex-shrink: 0; }
+  .search-box input {
+    border: none; background: transparent;
+    font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500; color: var(--text-primary);
+    outline: none; width: 100%;
+  }
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  /* ─── LIST CONTAINER ─── */
+  .list-wrap {
+    padding: 0 16px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    margin: 0 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 14px rgba(45,74,45,0.07);
+    animation: fadeIn 0.4s 0.08s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── HARVEST ITEM ─── */
+  .harvest-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f4f0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .harvest-item:last-child { border-bottom: none; }
+  .harvest-item:hover { background: #fafcfa; }
+
+  .harvest-icon {
+    width: 46px; height: 46px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .harvest-icon.green { background: var(--tag-green); }
+  .harvest-icon.orange { background: var(--tag-orange); }
+  .harvest-icon.blue { background: #e8ecff; }
+
+  .harvest-info { flex: 1; min-width: 0; }
+  .harvest-name {
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .harvest-date { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .harvest-right { text-align: right; flex-shrink: 0; }
+  .harvest-amount {
+    font-size: 15px; font-weight: 800; color: var(--text-primary);
+  }
+  .harvest-tag {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 10px; font-weight: 700;
+    border-radius: 100px;
+    padding: 2px 8px;
+    letter-spacing: 0.3px;
+  }
+  .harvest-tag.sukses { background: var(--tag-green); color: var(--tag-green-text); }
+  .harvest-tag.proses { background: var(--tag-orange); color: var(--tag-orange-text); }
+
+  /* ─── SECTION LABEL ─── */
+  .section-label {
+    padding: 16px 24px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 14px;
+    display: none;
+  }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 390px;
+    background: #fff;
+    border-top: 1px solid #e8ede8;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 14px 24px 22px;
+    z-index: 100;
+  }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+  .nav-icon {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #f0f2ef;
+  }
+  .nav-icon.active { background: var(--green-deep); }
+  .nav-icon svg { width: 20px; height: 20px; }
+</style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="header-title">Riwayat Panen</span>
+    <div class="header-filter">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#2d4a2d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Cari riwayat panen..." oninput="filterList()">
+    </div>
+  </div>
+
+  <!-- SECTION: BULAN INI -->
+  <div class="section-label">Bulan Ini</div>
+  <div class="list-wrap" id="listWrap">
+
+    <div class="harvest-item" data-name="Padi – Sawah Utara">
+      <div class="harvest-icon green">🌾</div>
+      <div class="harvest-info">
+        <div class="harvest-name">Padi – Sawah Utara</div>
+        <div class="harvest-date">28 Apr 2026 · Blok A3</div>
+      </div>
+      <div class="harvest-right">
+        <div class="harvest-amount">12.4 Ton</div>
+        <span class="harvest-tag sukses">Sukses</span>
+      </div>
+    </div>
+
+    <div class="harvest-item" data-name="Jagung – Lahan Barat">
+      <div class="harvest-icon orange">🌽</div>
+      <div class="harvest-info">
+        <div class="harvest-name">Jagung – Lahan Barat</div>
+        <div class="harvest-date">25 Apr 2026 · Blok B1</div>
+      </div>
+      <div class="harvest-right">
+        <div class="harvest-amount">8.7 Ton</div>
+        <span class="harvest-tag proses">Proses</span>
+      </div>
+    </div>
+
+    <div class="harvest-item" data-name="Kedelai – Lahan Timur">
+      <div class="harvest-icon green">🫘</div>
+      <div class="harvest-info">
+        <div class="harvest-name">Kedelai – Lahan Timur</div>
+        <div class="harvest-date">20 Apr 2026 · Blok C2</div>
+      </div>
+      <div class="harvest-right">
+        <div class="harvest-amount">5.1 Ton</div>
+        <span class="harvest-tag sukses">Sukses</span>
+      </div>
+    </div>
+
+    <div class="harvest-item" data-name="Singkong – Kebun Selatan">
+      <div class="harvest-icon blue">🍠</div>
+      <div class="harvest-info">
+        <div class="harvest-name">Singkong – Kebun Selatan</div>
+        <div class="harvest-date">15 Apr 2026 · Blok D4</div>
+      </div>
+      <div class="harvest-right">
+        <div class="harvest-amount">20.0 Ton</div>
+        <span class="harvest-tag sukses">Sukses</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECTION: BULAN LALU -->
+  <div class="section-label">Bulan Lalu</div>
+  <div class="list-wrap">
+
+    <div class="harvest-item" data-name="Tebu – Kebun Besar">
+      <div class="harvest-icon green">🎋</div>
+      <div class="harvest-info">
+        <div class="harvest-name">Tebu – Kebun Besar</div>
+        <div class="harvest-date">30 Mar 2026 · Blok E1</div>
+      </div>
+      <div class="harvest-right">
+        <div class="harvest-amount">45.2 Ton</div>
+        <span class="harvest-tag sukses">Sukses</span>
+      </div>
+    </div>
+
+    <div class="harvest-item" data-name="Padi – Sawah Selatan">
+      <div class="harvest-icon green">🌾</div>
+      <div class="harvest-info">
+        <div class="harvest-name">Padi – Sawah Selatan</div>
+        <div class="harvest-date">22 Mar 2026 · Blok A1</div>
+      </div>
+      <div class="harvest-right">
+        <div class="harvest-amount">10.8 Ton</div>
+        <span class="harvest-tag sukses">Sukses</span>
+      </div>
+    </div>
+
+    <div class="harvest-item" data-name="Kelapa Sawit – Kebun Induk">
+      <div class="harvest-icon orange">🌴</div>
+      <div class="harvest-info">
+        <div class="harvest-name">Kelapa Sawit – Kebun Induk</div>
+        <div class="harvest-date">10 Mar 2026 · Blok F2</div>
+      </div>
+      <div class="harvest-right">
+        <div class="harvest-amount">32.6 Ton</div>
+        <span class="harvest-tag proses">Proses</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="empty-state" id="emptyState">Tidak ada riwayat yang ditemukan.</div>
+
+</div>
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a href="dashboard.html" class="nav-link">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6b8a6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+    </div>
+  </div>
+
+  <a href="kalkulator.html" class="nav-link">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6b8a6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <a href="riwayat.html" class="nav-link">
+    <div class="nav-item">
+      <div class="nav-icon active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+          <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <a href="profile.html" class="nav-link">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6b8a6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+  function filterList() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const items = document.querySelectorAll('.harvest-item');
+    let shown = 0;
+    items.forEach(item => {
+      const name = item.dataset.name.toLowerCase();
+      const visible = name.includes(q);
+      item.style.display = visible ? 'flex' : 'none';
+      if (visible) shown++;
+    });
+    document.getElementById('emptyState').style.display = shown === 0 ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>

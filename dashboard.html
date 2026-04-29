@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SiKAPAN – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #2d4a2d;
+    --green-mid: #3a5c3a;
+    --green-light: #4e7a4e;
+    --accent-orange: #e8873a;
+    --accent-purple: #7c6fcf;
+    --bg: #f0f2ef;
+    --card-bg: #ffffff;
+    --text-primary: #1a2e1a;
+    --text-muted: #6b8a6b;
+    --text-light: #a8bfa8;
+    --chart-line: #7c6fcf;
+    --chart-fill: rgba(124, 111, 207, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  .phone-shell {
+    width: 390px;
+    min-height: 844px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 90px;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    background: var(--green-deep);
+    padding: 18px 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar-logo {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 1.5px;
+  }
+  .topbar-bell {
+    width: 42px;
+    height: 42px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .topbar-bell svg { width: 20px; height: 20px; color: var(--green-deep); }
+
+  /* ─── SCROLL AREA ─── */
+  .scroll-area {
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+  }
+
+  /* ─── STAT CARDS ─── */
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 18px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(45,74,45,0.07);
+    animation: slideUp 0.4s ease both;
+  }
+  .stat-card:nth-child(1) { animation-delay: 0.05s; }
+  .stat-card:nth-child(2) { animation-delay: 0.10s; }
+  .stat-card:nth-child(3) { animation-delay: 0.15s; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-info { display: flex; flex-direction: column; gap: 4px; }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .stat-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+  .stat-delta {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4caf7d;
+    margin-top: 2px;
+  }
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .stat-icon.purple { background: var(--accent-purple); }
+  .stat-icon.orange { background: var(--accent-orange); }
+  .stat-icon svg { width: 22px; height: 22px; fill: #fff; }
+
+  /* ─── CHART CARD ─── */
+  .chart-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 20px 18px 14px;
+    box-shadow: 0 2px 12px rgba(45,74,45,0.07);
+    animation: slideUp 0.4s 0.2s ease both;
+  }
+  .chart-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .chart-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; margin-bottom: 16px; }
+
+  .chart-svg-wrap { width: 100%; }
+  .chart-svg-wrap svg { width: 100%; height: 130px; }
+
+  .chart-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 4px;
+    margin-top: 6px;
+  }
+  .chart-labels span {
+    font-size: 10px;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  /* ─── TOTAL PANEN CARD ─── */
+  .total-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    box-shadow: 0 2px 12px rgba(45,74,45,0.07);
+    animation: slideUp 0.4s 0.25s ease both;
+  }
+  .total-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+  }
+  .total-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  .total-col { display: flex; flex-direction: column; gap: 2px; }
+  .total-col-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .total-col-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .flag-wrap { display: flex; align-items: center; gap: 6px; }
+  .flag { font-size: 18px; }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 390px;
+    background: #fff;
+    border-top: 1px solid #e8ede8;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 14px 24px 22px;
+    z-index: 100;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+  }
+  .nav-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f2ef;
+  }
+  .nav-icon.active { background: var(--green-deep); }
+  .nav-icon svg { width: 20px; height: 20px; }
+  .nav-icon.active svg path,
+  .nav-icon.active svg rect,
+  .nav-icon.active svg circle { stroke: #fff; }
+</style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <span class="topbar-logo">SiKAPAN</span>
+    <div class="topbar-bell">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#2d4a2d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+
+    <!-- WEATHER -->
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Perkiraan Cuaca</span>
+        <span class="stat-value">25°C</span>
+        <span class="stat-delta">+2°C since yesterday</span>
+      </div>
+      <div class="stat-icon purple">
+        <svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 015 5c0 2.08-.84 3.96-2.2 5.33A6 6 0 1110.17 18H8a6 6 0 010-12h.34A5 5 0 0112 2z"/></svg>
+      </div>
+    </div>
+
+    <!-- HARGA JUAL -->
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Harga Jual Hari Ini</span>
+        <span class="stat-value">$103,430</span>
+        <span class="stat-delta">+5000 than last month</span>
+      </div>
+      <div class="stat-icon orange">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      </div>
+    </div>
+
+    <!-- PERKIRAAN PANEN -->
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Perkiraan Panen</span>
+        <span class="stat-value">100 – 150 Ton</span>
+        <span class="stat-delta">+5000 than last month</span>
+      </div>
+      <div class="stat-icon orange">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-card">
+      <div class="chart-title">Sales Overview</div>
+      <div class="chart-sub">4% more in 2021</div>
+      <div class="chart-svg-wrap">
+        <svg viewBox="0 0 320 130" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7c6fcf" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#7c6fcf" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Grid lines -->
+          <line x1="0" y1="30" x2="320" y2="30" stroke="#e8ede8" stroke-width="1"/>
+          <line x1="0" y1="60" x2="320" y2="60" stroke="#e8ede8" stroke-width="1"/>
+          <line x1="0" y1="90" x2="320" y2="90" stroke="#e8ede8" stroke-width="1"/>
+          <!-- Fill area -->
+          <path d="M0 110 C20 100,30 95,50 80 C70 65,80 40,110 30 C130 23,145 55,165 48 C185 41,200 65,220 60 C240 55,260 75,280 65 C300 55,310 30,320 20 L320 130 L0 130 Z" fill="url(#chartFill)"/>
+          <!-- Line -->
+          <path d="M0 110 C20 100,30 95,50 80 C70 65,80 40,110 30 C130 23,145 55,165 48 C185 41,200 65,220 60 C240 55,260 75,280 65 C300 55,310 30,320 20" stroke="#7c6fcf" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="chart-labels">
+        <span>Apr</span><span>May</span><span>Jun</span><span>Jul</span>
+        <span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+      </div>
+    </div>
+
+    <!-- TOTAL PANEN -->
+    <div class="total-card">
+      <div class="total-title">Total Panen</div>
+      <div class="total-row">
+        <div class="total-col">
+          <span class="total-col-label">Country</span>
+          <div class="flag-wrap">
+            <span class="flag">🇺🇸</span>
+            <span class="total-col-val" style="font-size:11px;">United States</span>
+          </div>
+        </div>
+        <div class="total-col">
+          <span class="total-col-label">Sales</span>
+          <span class="total-col-val">2500</span>
+        </div>
+        <div class="total-col">
+          <span class="total-col-label">Value</span>
+          <span class="total-col-val">$230,900</span>
+        </div>
+        <div class="total-col">
+          <span class="total-col-label">Bounce</span>
+          <span class="total-col-val">29.9%</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scroll-area -->
+</div><!-- /phone-shell -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a href="dashboard.html" class="nav-link">
+    <div class="nav-item">
+      <div class="nav-icon active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+  <a href="kalkulator.html" class="nav-link">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6b8a6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <a href="riwayat.html" class="nav-link">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6b8a6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+          <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+  <a href="profile.html" class="nav-link">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6b8a6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+</div>
+
+</body>
+</html>
